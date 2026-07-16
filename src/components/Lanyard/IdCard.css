@@ -1,0 +1,43 @@
+
+ */
+:root {
+
+  --card-width: 1.4;
+  --card-height: 1.4.5;
+
+  /* Front face */
+  --card-front-bg-1: #0a0a0f;
+  --card-front-bg-2: #0f172a;
+  --card-front-bg-3: #1e1b4b;
+  --card-grid-line: rgba(255, 255, 255, 0.03);
+  --card-front-border-glow: rgba(59, 130, 246, 0.3);
+  --card-avatar-glow: rgba(96, 165, 250, 0.35);
+  --card-avatar-ring-1: #60a5fa;
+  --card-avatar-ring-2: #a78bfa;
+  --card-avatar-placeholder-bg: #1e293b;
+  --card-avatar-placeholder-text: #ffffff;
+  --card-name-color: #ffffff;
+  --card-role-color: #60a5fa;
+  --card-divider-color: rgba(167, 139, 250, 0.9);
+  --card-tagline-color: #94a3b8;
+  --card-barcode-bg: #ffffff;
+  --card-barcode-bars: #000000;
+  --card-barcode-caption: rgba(255, 255, 255, 0.45);
+
+  /* Back face */
+  --card-back-bg-1: #1e1b4b;
+  --card-back-bg-2: #0f172a;
+  --card-back-bg-3: #0a0a0f;
+  --card-back-border-glow: rgba(124, 58, 237, 0.3);
+  --card-monogram-label: rgba(255, 255, 255, 0.02);
+  --card-emblem-ring-1: #60a5fa;
+  --card-emblem-ring-2: #a78bfa;
+  --card-emblem-text: #ffffff;
+  --card-back-title: #ffffff;
+  --card-back-subtitle: #94a3b8;
+  --card-contact-label: #cbd5e1;
+  --card-contact-value: #ffffff;
+  --card-qr-bg: #ffffff;
+  --card-qr-fg: #0f172a;
+  --card-qr-caption: rgba(255, 255, 255, 0.3);
+}

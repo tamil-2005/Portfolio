@@ -1,0 +1,24 @@
+# Copy this file to terraform.tfvars and fill in your values.
+# Never commit the real terraform.tfvars (it is git-ignored).
+
+tenancy_ocid       = "ocid1.tenancy.oc1..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+user_ocid          = "ocid1.user.oc1..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+api_fingerprint    = "xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx:xx"
+api_private_key_path = "~/.oci/oci_api_key.pem"
+region             = "ap-mumbai-1"
+compartment_ocid   = "ocid1.compartment.oc1..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# Find your AD:  oci iam availability-domain list
+availability_domain = "ZLjJ:AP-MUMBAI-1-AD-1"
+
+# Find the Ubuntu 22.04 image OCID for your region:
+#   oci compute image list --compartment-id <tenancy> \
+#     --operating-system "Canonical Ubuntu" \
+#     --operating-system-version "22.04" --shape VM.Standard.E2.1.Micro
+ubuntu_image_id    = "ocid1.image.oc1..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# Your public SSH key (cat ~/.ssh/id_rsa.pub)
+ssh_public_key     = "ssh-rsa AAAA..."
+
+vcn_cidr    = "10.0.0.0/16"
+subnet_cidr = "10.0.0.0/24"

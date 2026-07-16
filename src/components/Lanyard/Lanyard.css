@@ -1,0 +1,79 @@
+/*
+ * Rope/strap tokens for the lanyard band (the physics-driven mesh in
+ * Lanyard.jsx, separate from the ID card itself — see IdCard.css for that).
+ * Read via getComputedStyle at render time since a WebGL canvas can't be
+ * targeted by CSS selectors directly. Edit, then reload the page.
+ */
+:root {
+  /* Strap thickness, in the same units as Three.js's meshLineMaterial
+     lineWidth (roughly: fraction of the screen resolution passed to the
+     material). Bigger = thicker strap. */
+  --rope-width: 1;
+
+  /* Length of each of the rope's 3 physics segments (unitless "world"
+     units used by the rope joints in Lanyard.jsx). Bigger = the card hangs
+     lower / the strap reads longer. The 3 segments scale together, so this
+     is an overall rope-length control, not per-segment. WARNING: the metal
+     clip mesh (from card.glb) is a fixed asset sized to bridge the gap
+     between the rope's end and the card's attachment point at exactly the
+     default length (1) — moving this off 1 changes where the rope
+     physically settles but NOT the clip's shape, so the clip visually
+     detaches from the rope (looks like a floating/disconnected hook). Keep
+     this at 1 unless you also compensate --card-pos-y to close the gap. */
+  --rope-length: 0.7;
+
+  /* Strap color. */
+  --rope-color: #0a0a0a;
+
+  /* Anchor point the rope hangs from, in Three.js scene units. X is added
+     on top of the automatic full-screen layout offset that Lanyard.jsx
+     computes (so it stays centered over the right column on desktop);
+     Y/Z are used directly. Raising --anchor-y moves the whole rope+card
+     assembly up. */
+  --anchor-x: 0;
+  --anchor-y: 4;
+  --anchor-z: 0;
+
+  /* Card mesh's position within its physics body — nudges the visual
+     card/clip/clamp group relative to the invisible collider. WARNING: the
+     rope's actual attachment point is a FIXED offset set in Lanyard.jsx
+     (the spherical joint), not linked to this token. -1.2 is the tuned
+     value where the clip hook lines up with where the rope really ends —
+     moving --card-pos-y away from -1.2 pulls the card away from the rope
+     visually (the clip will look detached/floating, like it's not holding
+     the rope). Keep this at or very near -1.2 unless you also move the
+     joint offset in Lanyard.jsx to match. */
+  --card-pos-x: 0;
+  --card-pos-y: -1.2;
+  --card-pos-z: -0.05;
+
+  /* Metal "hook" — the clip + clamp mesh (from card.glb) that visually
+     connects the rope to the card. --hook-color and --hook-metalness are
+     left BLANK on purpose: blank means "keep card.glb's baked metal
+     material as-is" — fill in a value (e.g. --hook-color: #silver;) to
+     override it (e.g. --hook-color: #d4d4d8;). --hook-roughness has a real
+     default (0.3) since both pieces already used that value. */
+  --hook-color: ;
+  --hook-metalness: ;
+  --hook-roughness: 0.1;
+
+  /* Clip attachment point — where the rope's end (the spherical joint)
+     physically connects to the card's RigidBody, in the card's own local/
+     unscaled space. This is the value --card-pos-y's warning above refers
+     to: for the clip mesh to visually line up with the rope, this should
+     stay close to --card-pos-y's magnitude (default 1.5 pairs with -1.2).
+     Move both together when re-tuning the hookup, not just one. */
+  --clip-attach-x: 0;
+  --clip-attach-y: 1.5;
+  --clip-attach-z: 0;
+}
+
+.lanyard-wrapper {
+  position: relative;
+  z-index: 0;
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

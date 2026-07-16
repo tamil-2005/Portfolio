@@ -1,0 +1,22 @@
+# docker-compose for the Oracle Cloud VM
+# This file is also written onto the VM by the CI/CD pipeline.
+# Run manually on the VM with:  docker compose up -d --pull always
+
+services:
+  web:
+    image: ghcr.io/<your-github-username>/pro-portfolio:latest
+    container_name: pro-portfolio
+    restart: unless-stopped
+    ports:
+      - "80:80"
+    healthcheck:
+      test: ["CMD", "wget", "-qO-", "http://localhost/"]
+      interval: 30s
+      timeout: 3s
+      retries: 3
+      start_period: 5s
+    logging:
+      driver: json-file
+      options:
+        max-size: "10m"
+        max-file: "3"
