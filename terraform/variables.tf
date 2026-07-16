@@ -40,8 +40,9 @@ variable "availability_domain" {
 }
 
 variable "ubuntu_image_id" {
-  description = "OCID of the Canonical Ubuntu 22.04 image for the region"
+  description = "OCID of the Canonical Ubuntu 22.04 image. If empty, auto-discovered via data source."
   type        = string
+  default     = ""
 }
 
 variable "ssh_public_key" {

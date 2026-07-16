@@ -12,3 +12,8 @@ terraform/.terraform.lock.hcl
 *.tfstate.*
 .terraform/
 .terraform.lock.hcl
+
+# Terraform local artifacts
+terraform/tfplan
+terraform/plan_output.txt
+terraform/apply_output.txt
