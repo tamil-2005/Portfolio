@@ -28,6 +28,17 @@ apt-get install -y docker-ce docker-ce-cli containerd.io docker-buildx-plugin do
 systemctl enable --now docker
 usermod -aG docker ubuntu
 
+echo "==> Configuring OS Firewall for HTTP/HTTPS"
+iptables -I INPUT -p tcp --dport 80 -j ACCEPT || true
+iptables -I INPUT -p tcp --dport 443 -j ACCEPT || true
+if command -v netfilter-persistent &> /dev/null; then
+  netfilter-persistent save || true
+fi
+if command -v ufw &> /dev/null; then
+  ufw allow 80/tcp || true
+  ufw allow 443/tcp || true
+fi
+
 echo "==> Creating app directory"
 mkdir -p /opt/pro-portfolio
 
