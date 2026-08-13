@@ -113,6 +113,7 @@ jobs:
             docker rm -f pro-portfolio || true
 
             echo "==> Starting container"
+            cd /opt/pro-portfolio
             docker compose up -d --pull always
 
             echo "==> Pruning old images"
