@@ -9,6 +9,11 @@ services:
     restart: unless-stopped
     ports:
       - "80:80"
+      - "443:443"
+    volumes:
+      - /etc/letsencrypt/live/devtamil.online/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
+      - /etc/letsencrypt/live/devtamil.online/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
+      - /var/www/certbot:/var/www/certbot
     pull_policy: always
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost/"]

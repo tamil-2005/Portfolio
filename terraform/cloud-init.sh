@@ -48,4 +48,16 @@ systemctl stop nginx 2>/dev/null || true
 systemctl disable nginx 2>/dev/null || true
 apt-get remove -y nginx nginx-common 2>/dev/null || true
 
+echo "==> Installing certbot"
+apt-get install -y certbot
+mkdir -p /etc/letsencrypt /var/www/certbot/.well-known/acme-challenge
+chmod 755 /etc/letsencrypt
+chown -R ubuntu:ubuntu /var/www/certbot
+
+echo "==> Setting up certbot auto-renewal"
+cat > /etc/cron.d/certbot-renew <<'CRON'
+0 3 * * * root certbot renew --quiet --webroot -w /var/www/certbot --deploy-hook "docker restart pro-portfolio"
+CRON
+chmod 644 /etc/cron.d/certbot-renew
+
 echo "==> Bootstrap complete"

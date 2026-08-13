@@ -107,10 +107,25 @@ jobs:
                 restart: unless-stopped
                 ports:
                   - "80:80"
+                  - "443:443"
+                volumes:
+                  - /etc/letsencrypt/live/devtamil.online/fullchain.pem:/etc/nginx/ssl/fullchain.pem:ro
+                  - /etc/letsencrypt/live/devtamil.online/privkey.pem:/etc/nginx/ssl/privkey.pem:ro
+                  - /var/www/certbot:/var/www/certbot
             EOF
 
             echo "==> Removing previous container (if any)"
             docker rm -f pro-portfolio || true
+
+            echo "==> Ensuring TLS certificate exists (Let's Encrypt)"
+            if [ ! -f /etc/letsencrypt/live/devtamil.online/fullchain.pem ]; then
+              echo "No certificate found — issuing with standalone challenge (port 80 is free)"
+              sudo certbot certonly --standalone \
+                -d devtamil.online -d www.devtamil.online \
+                --non-interactive --agree-tos \
+                --email ${{ secrets.CERTBOT_EMAIL }} \
+                --cert-name devtamil.online
+            fi
 
             echo "==> Starting container"
             cd /opt/pro-portfolio
