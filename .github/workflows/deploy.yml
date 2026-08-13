@@ -86,14 +86,17 @@ jobs:
           port: 22
           script: |
             set -e
-            echo "==> Pulling latest image"
-            docker pull ${{ env.IMAGE_NAME }}:latest
+            echo "==> Pulling image: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}"
+            docker pull ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
+
+            echo "==> Ensuring deployment directory exists"
+            mkdir -p /opt/pro-portfolio
 
             echo "==> Writing/updating compose file"
-            cat > /opt/pro-portfolio/docker-compose.yml <<'EOF'
+            cat > /opt/pro-portfolio/docker-compose.yml <<EOF
             services:
               web:
-                image: ${{ env.IMAGE_NAME }}:latest
+                image: ${{ env.IMAGE_NAME }}:${{ env.IMAGE_TAG }}
                 container_name: pro-portfolio
                 restart: unless-stopped
                 ports:
