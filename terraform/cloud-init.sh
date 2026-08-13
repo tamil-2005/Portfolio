@@ -43,4 +43,9 @@ echo "==> Creating app directory"
 mkdir -p /opt/pro-portfolio
 chown -R ubuntu:ubuntu /opt/pro-portfolio
 
+echo "==> Disabling host nginx (port 80 belongs to the app container)"
+systemctl stop nginx 2>/dev/null || true
+systemctl disable nginx 2>/dev/null || true
+apt-get remove -y nginx nginx-common 2>/dev/null || true
+
 echo "==> Bootstrap complete"
