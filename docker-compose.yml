@@ -4,11 +4,12 @@
 
 services:
   web:
-    image: ghcr.io/<your-github-username>/pro-portfolio:latest
+    image: ghcr.io/tamil-2005/pro-portfolio:latest
     container_name: pro-portfolio
     restart: unless-stopped
     ports:
       - "80:80"
+    pull_policy: always
     healthcheck:
       test: ["CMD", "wget", "-qO-", "http://localhost/"]
       interval: 30s

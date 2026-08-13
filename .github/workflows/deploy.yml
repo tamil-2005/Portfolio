@@ -5,6 +5,11 @@ on:
     branches: [main]
   workflow_dispatch:
 
+# Only one deploy at a time; cancel stale runs if a newer commit lands
+concurrency:
+  group: deploy-oracle
+  cancel-in-progress: true
+
 # Permissions needed to push the image to GitHub Container Registry (GHCR)
 permissions:
   contents: read
@@ -18,6 +23,7 @@ jobs:
   build-and-deploy:
     name: Build, Push & Deploy
     runs-on: ubuntu-latest
+    timeout-minutes: 15
 
     steps:
       # ---------------------------------------------------------------
@@ -103,8 +109,11 @@ jobs:
                   - "80:80"
             EOF
 
-            echo "==> Restarting container"
+            echo "==> Removing previous compose-managed stack (if any)"
             cd /opt/pro-portfolio
+            docker compose down --remove-orphans || true
+
+            echo "==> Starting container"
             docker compose up -d --pull always
 
             echo "==> Pruning old images"

@@ -21,7 +21,10 @@ echo "==> Building image: $IMAGE"
 docker build -t "$IMAGE" .
 
 echo "==> Pushing image"
-echo "$GHCR_TOKEN" | docker login ghcr.io -u "${GHCR_USER:-$GITHUB_ACTOR}" --password-stdin || docker push "$IMAGE"
+if [ -n "${GHCR_TOKEN:-}" ]; then
+  echo "$GHCR_TOKEN" | docker login ghcr.io -u "${GHCR_USER:-$GITHUB_ACTOR}" --password-stdin
+fi
+docker push "$IMAGE"
 
 echo "==> Deploying to $ORACLE_USER@$ORACLE_HOST"
 ssh -o StrictHostKeyChecking=no "$ORACLE_USER@$ORACLE_HOST" bash -s <<REMOTE

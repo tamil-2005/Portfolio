@@ -41,5 +41,6 @@ fi
 
 echo "==> Creating app directory"
 mkdir -p /opt/pro-portfolio
+chown -R ubuntu:ubuntu /opt/pro-portfolio
 
 echo "==> Bootstrap complete"
