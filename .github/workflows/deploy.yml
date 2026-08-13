@@ -109,9 +109,8 @@ jobs:
                   - "80:80"
             EOF
 
-            echo "==> Removing previous compose-managed stack (if any)"
-            cd /opt/pro-portfolio
-            docker compose down --remove-orphans || true
+            echo "==> Removing previous container (if any)"
+            docker rm -f pro-portfolio || true
 
             echo "==> Starting container"
             docker compose up -d --pull always
