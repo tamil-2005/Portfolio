@@ -60,7 +60,7 @@ export default function Lanyard({
 
   const adjustedPosition = useMemo(() => {
     if (isMobile) {
-      return [position[0], position[1], 8.2];
+      return [position[0], position[1], 12.0];
     }
     return position;
   }, [position, isMobile]);
@@ -148,7 +148,7 @@ function Band({
   const ropeColor = cssVar('--rope-color', '#0a0a0a');
   // Anchor + card-group position tokens from Lanyard.css.
   const anchorOffsetX = cssVarNumber('--anchor-x', 0);
-  const anchorY = cssVarNumber('--anchor-y', 4);
+  const anchorY = isMobile ? 3.4 : cssVarNumber('--anchor-y', 4);
   const anchorZ = cssVarNumber('--anchor-z', 0);
   const cardPosX = cssVarNumber('--card-pos-x', 0);
   const cardPosY = cssVarNumber('--card-pos-y', -1.2);
@@ -200,6 +200,19 @@ function Band({
     cardTex,
     baseMap: materials.base.map
   });
+  const heightScale = cssVarNumber('--card-height', 1);
+  const cardCenterY = useMemo(() => {
+    if (!nodes.card.geometry) return -1.125;
+    nodes.card.geometry.computeBoundingBox();
+    const box = nodes.card.geometry.boundingBox;
+    if (!box) return -1.125;
+    const topY = box.max.y;
+    const yOffset = topY * (1 - heightScale);
+    return yOffset + heightScale * (box.max.y + box.min.y) / 2;
+  }, [nodes.card.geometry, heightScale]);
+
+  const currentScale = isMobile ? 1.55 : 2.25;
+
   const [curve] = useState(
     () =>
       new THREE.CatmullRomCurve3([new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3(), new THREE.Vector3()])
@@ -245,7 +258,7 @@ function Band({
       curve.points[1].copy(j2.current.lerped);
       curve.points[2].copy(j1.current.lerped);
       curve.points[3].copy(fixed.current.translation());
-      band.current.geometry.setPoints(curve.getPoints(isMobile ? 16 : 32));
+      band.current.geometry.setPoints(curve.getPoints(32));
       ang.copy(card.current.angvel());
       rot.copy(card.current.rotation());
       card.current.setAngvel({ x: ang.x, y: ang.y - rot.y * 0.25, z: ang.z });
@@ -271,7 +284,7 @@ function Band({
         <RigidBody position={[2 * ropeSegmentLength, 0, 0]} ref={card} {...segmentProps} type={dragged ? 'kinematicPosition' : 'dynamic'}>
           <CuboidCollider args={[0.8, 1.125, 0.01]} />
           <group
-            scale={2.25}
+            scale={currentScale}
             position={[cardPosX, cardPosY, cardPosZ]}
             onPointerOver={() => hover(true)}
             onPointerOut={() => hover(false)}
@@ -304,7 +317,7 @@ function Band({
         <meshLineMaterial
           color={ropeColor}
           depthTest={false}
-          resolution={isMobile ? [1000, 2000] : [1000, 1000]}
+          resolution={[size.width, size.height]}
           lineWidth={ropeWidth}
         />
       </mesh>

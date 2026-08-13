@@ -1,9 +1,10 @@
-
+/*
+ * Style tokens for the ID Card face drawing.
  */
 :root {
 
   --card-width: 1.4;
-  --card-height: 1.4.5;
+  --card-height: 1.4;
 
   /* Front face */
   --card-front-bg-1: #0a0a0f;

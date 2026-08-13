@@ -88,7 +88,7 @@ export default function Home() {
 
           {/* Right — Lanyard scene (placeholder keeps layout when the canvas
               covers the whole hero on desktop) */}
-          <div className="flex flex-none lg:flex-1 justify-center items-center h-[350px] sm:h-[450px] lg:h-[550px] w-full max-w-full anim-fadeUp delay-300" style={{ minWidth: 280 }}>
+          <div className="flex flex-none lg:flex-1 justify-center items-center h-[420px] sm:h-[480px] lg:h-[550px] w-full max-w-full anim-fadeUp delay-300" style={{ minWidth: 280 }}>
             {!isDesktop && (
               <Lanyard position={[0, 0, 12]} gravity={[0, -40, 0]} cardImage={CARD_IMAGE} />
             )}
