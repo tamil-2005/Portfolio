@@ -1,6 +1,7 @@
 import React from "react";
 import { useScrollReveal } from "../hooks/useCustomHooks";
 import { EDUCATION } from "../data/portfolioData";
+import CardSwap, { Card } from "./CardSwap/CardSwap";
 
 function RevealDiv({ children, className = "", delay = 0 }) {
   const [ref, visible] = useScrollReveal();
@@ -24,10 +25,10 @@ function SectionLabel({ children }) {
 }
 
 const STATS = [
-  { icon: "fa-solid fa-display",     value: "1.5+", label: "Years in Tech",  color: "#2563eb", bg: "#eff4ff" },
-  { icon: "fa-solid fa-code",        value: "10+",  label: "Projects Built", color: "#7c3aed", bg: "#f3efff" },
-  { icon: "fa-solid fa-layer-group", value: "7+",   label: "Technologies",   color: "#10b981", bg: "#ecfdf5" },
-  { icon: "fa-solid fa-cloud",       value: "2+",   label: "Cloud Services", color: "#f59e0b", bg: "#fff7ed" },
+  { icon: "fa-solid fa-display",     value: "1.5+", label: "Years in Tech",  subtitle: "Building web apps & software solutions", color: "#2563eb", bg: "linear-gradient(135deg,#ffffff 0%,#eff4ff 100%)", border: "#bfdbfe" },
+  { icon: "fa-solid fa-code",        value: "10+",  label: "Projects Built", subtitle: "Full-stack apps & open source work",    color: "#7c3aed", bg: "linear-gradient(135deg,#ffffff 0%,#f3efff 100%)", border: "#ddd6fe" },
+  { icon: "fa-solid fa-layer-group", value: "7+",   label: "Technologies",   subtitle: "React, Java, Spring Boot, MySQL",       color: "#10b981", bg: "linear-gradient(135deg,#ffffff 0%,#ecfdf5 100%)", border: "#a7f3d0" },
+  { icon: "fa-solid fa-cloud",       value: "2+",   label: "Cloud Services", subtitle: "AWS EC2, S3, IAM & Terraform",          color: "#d97706", bg: "linear-gradient(135deg,#ffffff 0%,#fff7ed 100%)", border: "#fed7aa" },
 ];
 
 export default function About() {
@@ -87,20 +88,45 @@ export default function About() {
             </RevealDiv>
           </div>
 
-          {/* ── Right: 2×2 stat cards ── */}
-          <div className="grid grid-cols-2 gap-4 sm:gap-5 max-w-md w-full mx-auto lg:mx-0 lg:ml-auto">
-            {STATS.map((s, i) => (
-              <RevealDiv key={s.label} delay={150 + i * 100}>
-                <div className="bg-white rounded-2xl border border-gray-100 p-5 sm:p-6 shadow-sm hover:shadow-lg hover:-translate-y-1 transition-all duration-300 h-full">
-                  <div className="w-12 h-12 rounded-full flex items-center justify-center mb-4"
-                    style={{ backgroundColor: s.bg }}>
-                    <i className={`${s.icon} text-lg`} style={{ color: s.color }} />
+          {/* ── Right: Dynamic CardSwap stat cards ── */}
+          <div className="relative flex items-center justify-center min-h-[340px] sm:min-h-[380px] w-full max-w-md mx-auto lg:mx-0 lg:ml-auto">
+            <CardSwap
+              width={310}
+              height={210}
+              cardDistance={40}
+              verticalDistance={35}
+              delay={3200}
+              pauseOnHover={true}
+              skewAmount={4}
+            >
+              {STATS.map((s, i) => (
+                <Card
+                  key={i}
+                  className="p-5 flex flex-col justify-between cursor-pointer border border-gray-200/70 shadow-xl rounded-2xl bg-white"
+                  style={{ background: s.bg, border: `1px solid ${s.border}` }}
+                >
+                  <div className="flex items-center justify-between">
+                    <div
+                      className="w-11 h-11 rounded-2xl flex items-center justify-center shadow-sm"
+                      style={{ background: "#ffffff", border: `1px solid ${s.border}` }}
+                    >
+                      <i className={`${s.icon} text-lg`} style={{ color: s.color }} />
+                    </div>
+                    <span className="text-[10px] font-semibold tracking-wider uppercase px-2.5 py-1 rounded-full bg-white/90 text-gray-500 border border-gray-200/80 shadow-2xs">
+                      Stat #{i + 1}
+                    </span>
                   </div>
-                  <div className="text-2xl sm:text-3xl font-bold text-gray-900 leading-none mb-1.5">{s.value}</div>
-                  <div className="text-sm text-gray-500 font-medium">{s.label}</div>
-                </div>
-              </RevealDiv>
-            ))}
+
+                  <div>
+                    <div className="text-3xl font-extrabold text-gray-900 tracking-tight mb-0.5" style={{ color: s.color }}>
+                      {s.value}
+                    </div>
+                    <div className="text-base font-bold text-gray-800">{s.label}</div>
+                    <div className="text-xs text-gray-500 font-medium mt-0.5">{s.subtitle}</div>
+                  </div>
+                </Card>
+              ))}
+            </CardSwap>
           </div>
         </div>
 

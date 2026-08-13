@@ -2,6 +2,7 @@ import React, { useEffect, useRef, useState } from "react";
 import { useTyped } from "../hooks/useCustomHooks";
 import { TYPED_ROLES, SOCIAL } from "../data/portfolioData";
 import Lanyard from "./Lanyard/Lanyard";
+import MoltenMetal from "./MoltenMetal/MoltenMetal";
 
 const CARD_IMAGE = "/img/Black Orange Simple Portrait Company ID Card.png";
 
@@ -22,17 +23,37 @@ export default function Home() {
     <section
       ref={sectionRef}
       id="home"
-      className="relative min-h-screen flex items-center overflow-hidden noise"
+      className="relative min-h-screen flex items-center overflow-hidden"
       style={{ background: "linear-gradient(135deg, #0a0a0f 0%, #0f172a 50%, #1e1b4b 100%)" }}
     >
-      {/* Grid */}
-      <div className="absolute inset-0 opacity-[0.04]"
-        style={{ backgroundImage: "linear-gradient(#fff 1px,transparent 1px),linear-gradient(90deg,#fff 1px,transparent 1px)", backgroundSize: "60px 60px" }} />
+      {/* MoltenMetal background container - only for home page */}
+      <div className="absolute inset-0 z-0 pointer-events-none opacity-45">
+        <MoltenMetal
+          color1="#000000ff"
+          color2="#2563eb"
+          color3="#7c3aed"
+          speed={0.15}
+          scale={3.5}
+          detail={3}
+          glow={1.4}
+          coreSize={0.08}
+          swirl={0.3}
+          fold={-0.15}
+          blackPoint={0.02}
+          brightness={1.1}
+          colorMode="molten"
+          grain={true}
+          grainIntensity={0.04}
+          mouseInteraction={true}
+          mouseStrength={0.4}
+          opacity={1.0}
+        />
+      </div>
 
       {/* Glow orbs */}
-      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-20 blur-3xl pointer-events-none"
+      <div className="absolute top-1/4 left-1/4 w-96 h-96 rounded-full opacity-20 blur-3xl pointer-events-none z-0"
         style={{ background: "radial-gradient(circle,#2563eb,transparent 70%)" }} />
-      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full opacity-15 blur-3xl pointer-events-none"
+      <div className="absolute bottom-1/4 right-1/4 w-80 h-80 rounded-full opacity-15 blur-3xl pointer-events-none z-0"
         style={{ background: "radial-gradient(circle,#7c3aed,transparent 70%)" }} />
 
       <div className="relative z-10 max-w-7xl mx-auto px-6 py-24 w-full">
@@ -86,11 +107,24 @@ export default function Home() {
             </div>
           </div>
 
-          {/* Right — Lanyard scene (placeholder keeps layout when the canvas
-              covers the whole hero on desktop) */}
-          <div className="flex flex-none lg:flex-1 justify-center items-center h-[420px] sm:h-[480px] lg:h-[550px] w-full max-w-full anim-fadeUp delay-300" style={{ minWidth: 280 }}>
+          {/* Right — Interactive 3D Lanyard scene on desktop, static ID card on mobile */}
+          <div className="flex flex-none lg:flex-1 justify-center items-center h-auto lg:h-[550px] w-full max-w-full anim-fadeUp delay-300" style={{ minWidth: 280 }}>
             {!isDesktop && (
-              <Lanyard position={[0, 0, 12]} gravity={[0, -40, 0]} cardImage={CARD_IMAGE} />
+              <div className="relative flex flex-col items-center justify-center py-6 w-full">
+                {/* Lanyard Strap Header */}
+                <div className="w-1.5 h-12 bg-gradient-to-b from-gray-700 to-black rounded-full mb-[-10px] z-10 shadow-md opacity-80" />
+                <div className="w-7 h-3.5 bg-gradient-to-r from-gray-400 via-gray-200 to-gray-400 rounded-sm mb-[-6px] z-20 shadow-sm border border-gray-500/40 flex items-center justify-center">
+                  <div className="w-3.5 h-1 bg-gray-700 rounded-full" />
+                </div>
+                {/* Static Card Container */}
+                <div className="relative rounded-2xl overflow-hidden shadow-2xl shadow-blue-900/40 border border-white/15 max-w-[260px] sm:max-w-[300px] bg-slate-900/90 backdrop-blur-md transition-all duration-300 hover:scale-[1.02]">
+                  <img
+                    src={CARD_IMAGE}
+                    alt="Tamilselvan Mariyappan ID Card"
+                    className="w-full h-auto object-cover rounded-2xl block"
+                  />
+                </div>
+              </div>
             )}
           </div>
         </div>

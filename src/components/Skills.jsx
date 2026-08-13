@@ -103,12 +103,14 @@ function Plant() {
 
 function Laptop3D() {
   return (
-    <div className="hidden lg:block flex-shrink-0 relative" style={{ width: 450, height: 340 }}>
+    <div className="w-full max-w-[280px] sm:max-w-[340px] lg:max-w-[420px] h-[220px] sm:h-[260px] lg:h-[310px] flex-shrink-0 relative flex items-center justify-center">
+      {/* Background ambient glow */}
+      <div className="absolute inset-4 rounded-3xl bg-gradient-to-tr from-purple-500/10 via-blue-500/10 to-transparent blur-2xl pointer-events-none" />
       <DotLottieReact
         src="https://lottie.host/e481b028-7e5a-471f-a065-aed3e92abdc3/60XruRZiXc.json"
         loop
         autoplay
-        style={{ width: "100%", height: "100%" }}
+        style={{ width: "100%", height: "100%", objectFit: "contain" }}
       />
     </div>
   );
@@ -236,8 +238,8 @@ export default function Skills() {
       <div className="relative z-10 max-w-7xl mx-auto px-6">
 
         {/* Header: text left, 3D laptop right */}
-        <div className="flex items-start justify-between gap-8 mb-12 md:mb-16">
-          <div className="flex-1 min-w-0">
+        <div className="flex flex-col lg:flex-row items-center justify-between gap-8 lg:gap-12 mb-12 md:mb-16">
+          <div className="flex-1 max-w-2xl w-full">
             <div className="flex items-center gap-3 mb-4">
               <span className="text-xs font-semibold tracking-widest text-blue-600 uppercase">Skills</span>
               <span className="flex-1 h-px bg-gray-200" />
@@ -248,7 +250,7 @@ export default function Skills() {
                 my trade.
               </span>
             </h2>
-            <p className="text-gray-500 max-w-xs text-sm sm:text-base">Technologies and tools I work with across the stack.</p>
+            <p className="text-gray-500 max-w-md text-sm sm:text-base leading-relaxed">Technologies and tools I work with across the stack.</p>
           </div>
           <Laptop3D />
         </div>

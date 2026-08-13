@@ -139,7 +139,7 @@ function Band({
     ang = new THREE.Vector3(),
     rot = new THREE.Vector3(),
     dir = new THREE.Vector3();
-  const segmentProps = { type: 'dynamic', canSleep: true, colliders: false, angularDamping: 4, linearDamping: 4 };
+  const segmentProps = { type: isMobile ? 'fixed' : 'dynamic', canSleep: true, colliders: false, angularDamping: 4, linearDamping: 4 };
   // Rope/strap tokens from Lanyard.css — segment length scales the 3
   // physics segments (and their rest positions) together, so it reads as
   // one overall "rope length" control rather than 3 separate ones.
@@ -281,7 +281,7 @@ function Band({
         <RigidBody position={[1.5 * ropeSegmentLength, 0, 0]} ref={j3} {...segmentProps}>
           <BallCollider args={[0.1]} />
         </RigidBody>
-        <RigidBody position={[2 * ropeSegmentLength, 0, 0]} ref={card} {...segmentProps} type={dragged ? 'kinematicPosition' : 'dynamic'}>
+        <RigidBody position={[2 * ropeSegmentLength, 0, 0]} ref={card} {...segmentProps} type={isMobile ? 'fixed' : (dragged ? 'kinematicPosition' : 'dynamic')}>
           <CuboidCollider args={[0.8, 1.125, 0.01]} />
           <group
             scale={currentScale}
