@@ -10,12 +10,23 @@ compartment_ocid   = "ocid1.compartment.oc1..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx
 
 # Find your AD:  oci iam availability-domain list
 availability_domain = "ZLjJ:AP-MUMBAI-1-AD-1"
+# Index of the AD to use (0, 1, or 2). Try different values if you get "Out of host capacity".
+availability_domain_index = 0
 
 # Find the Ubuntu 22.04 image OCID for your region:
 #   oci compute image list --compartment-id <tenancy> \
 #     --operating-system "Canonical Ubuntu" \
-#     --operating-system-version "22.04" --shape VM.Standard.E2.1.Micro
+#     --operating-system-version "22.04" --shape VM.Standard.A1.Flex
 ubuntu_image_id    = "ocid1.image.oc1..xxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxxx"
+
+# Compute shape (Always Free Ampere A1 Flex: 1 OCPU / 4 GB RAM)
+instance_shape      = "VM.Standard.A1.Flex"
+instance_ocpus      = 1
+instance_memory_gbs = 4
+
+# Fault domain (FAULT-DOMAIN-1, FAULT-DOMAIN-2, or FAULT-DOMAIN-3).
+# Try different fault domains if you get "Out of host capacity".
+fault_domain = "FAULT-DOMAIN-1"
 
 # Your public SSH key (cat ~/.ssh/id_rsa.pub)
 ssh_public_key     = "ssh-rsa AAAA..."

@@ -33,7 +33,7 @@ const STATS = [
 
 export default function About() {
   return (
-    <section id="about" className="relative py-20 md:py-28 xl:py-32 overflow-hidden"
+    <section id="about" className="relative min-h-screen py-20 md:py-28 overflow-hidden flex flex-col justify-center"
       style={{ background: "linear-gradient(180deg,#fafbff 0%,#ffffff 100%)" }}>
 
       {/* Soft decorative wash */}

@@ -1,7 +1,8 @@
 /* eslint-disable react/no-unknown-property */
 'use client';
 import { useEffect, useMemo, useRef, useState } from 'react';
-import { Canvas, extend, useFrame, useThree, events } from '@react-three/fiber';
+import { Canvas, extend, useFrame, useThree, events, _roots } from '@react-three/fiber';
+if (typeof window !== 'undefined') window.__r3fRoots = _roots;
 import { useGLTF, useTexture, Environment, Lightformer } from '@react-three/drei';
 import { BallCollider, CuboidCollider, Physics, RigidBody, useRopeJoint, useSphericalJoint } from '@react-three/rapier';
 import { MeshLineGeometry, MeshLineMaterial } from 'meshline';
@@ -50,12 +51,45 @@ export default function Lanyard({
   eventSource = null,
   fullScreen = false
 }) {
+  window.__lanyardRenderCount = (window.__lanyardRenderCount || 0) + 1;
+  const wrapperRef = useRef(null);
+  const [active, setActive] = useState(true);
   const [isMobile, setIsMobile] = useState(() => typeof window !== 'undefined' && window.innerWidth < 768);
 
   useEffect(() => {
     const handleResize = () => setIsMobile(window.innerWidth < 768);
     window.addEventListener('resize', handleResize);
     return () => window.removeEventListener('resize', handleResize);
+  }, []);
+
+  // This canvas stays mounted for the whole session (it's the hero background),
+  // so without this it would keep stepping physics and rendering forever even
+  // after the user scrolls far past it. Mirrors the pause pattern already used
+  // by MoltenMetal for the same reason.
+  useEffect(() => {
+    const el = wrapperRef.current;
+    if (!el) return;
+    let isVisible = true;
+    let isPageVisible = !document.hidden;
+    const sync = () => setActive(isVisible && isPageVisible);
+
+    const io = new IntersectionObserver(([entry]) => {
+      isVisible = entry.isIntersecting;
+      window.__lanyardDebug = { isVisible, isPageVisible, ratio: entry.intersectionRatio };
+      sync();
+    }, { threshold: 0 });
+    io.observe(el);
+
+    const onVisibility = () => {
+      isPageVisible = !document.hidden;
+      sync();
+    };
+    document.addEventListener('visibilitychange', onVisibility);
+
+    return () => {
+      io.disconnect();
+      document.removeEventListener('visibilitychange', onVisibility);
+    };
   }, []);
 
   const adjustedPosition = useMemo(() => {
@@ -83,10 +117,12 @@ export default function Lanyard({
   }, [eventSource]);
 
   return (
-    <div className="lanyard-wrapper">
+    <div className="lanyard-wrapper" ref={wrapperRef}>
       <Canvas
         camera={{ position: adjustedPosition, fov }}
         gl={{ alpha: transparent }}
+        dpr={[1, 2]}
+        frameloop={(window.__lanyardActive = active) ? 'always' : 'never'}
         {...(eventSource ? { eventSource, events: eventManagerFactory } : {})}
       >
         <CameraController baseZ={adjustedPosition[2]} fullScreen={fullScreen} />
@@ -129,6 +165,7 @@ function Band({
   fov = 20,
   fullScreen = false
 }) {
+  window.__bandRenderCount = (window.__bandRenderCount || 0) + 1;
   const band = useRef(),
     fixed = useRef(),
     j1 = useRef(),
@@ -242,6 +279,10 @@ function Band({
       vec.add(dir.multiplyScalar(state.camera.position.length()));
       [card, j1, j2, j3, fixed].forEach(ref => ref.current?.wakeUp());
       card.current?.setNextKinematicTranslation({ x: vec.x - dragged.x, y: vec.y - dragged.y, z: vec.z - dragged.z });
+    } else if (card.current?.isSleeping?.()) {
+      // Rope has come to rest and nothing is dragging it — skip rebuilding
+      // the curve/geometry every frame until something wakes it again.
+      return;
     }
     if (fixed.current) {
       [j1, j2].forEach(ref => {

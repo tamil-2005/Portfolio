@@ -16,7 +16,7 @@ export default function Contact() {
   const inputCls = "w-full px-4 py-3 rounded-xl border border-gray-200 bg-white text-sm text-gray-800 placeholder-gray-400 focus:outline-none focus:border-blue-400 focus:ring-2 focus:ring-blue-100 transition-all";
 
   return (
-    <section id="contact" className="py-20 md:py-28 xl:py-36 bg-white">
+    <section id="contact" className="min-h-screen py-20 md:py-28 relative bg-white flex flex-col justify-center">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center gap-3 mb-4">
           <span className="text-xs font-semibold tracking-widest text-blue-600 uppercase">Contact</span>

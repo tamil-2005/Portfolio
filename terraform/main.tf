@@ -1,7 +1,7 @@
 # ---------------------------------------------------------------------------
 # Oracle Cloud Infrastructure — Always Free Compute for the portfolio
 # Provisions: VCN + Internet Gateway + Route Table + Subnet + Security List
-#             + Always-Free AMD VM (Ubuntu 22.04) with a public IP.
+#             + Always-Free Ampere A1 VM (Ubuntu 22.04) with a public IP.
 # ---------------------------------------------------------------------------
 
 terraform {
@@ -21,6 +21,8 @@ provider "oci" {
   fingerprint      = var.api_fingerprint
   private_key_path = var.api_private_key_path
   region           = var.region
+
+  retry_duration_seconds = 300
 }
 
 # ---- Compartment (use root compartment if no dedicated one) ----
@@ -34,7 +36,7 @@ data "oci_identity_availability_domains" "ads" {
 }
 
 locals {
-  ad_name = length(data.oci_identity_availability_domains.ads.availability_domains) > 0 ? data.oci_identity_availability_domains.ads.availability_domains[0].name : var.availability_domain
+  ad_name         = length(data.oci_identity_availability_domains.ads.availability_domains) > 0 ? data.oci_identity_availability_domains.ads.availability_domains[min(var.availability_domain_index, length(data.oci_identity_availability_domains.ads.availability_domains) - 1)].name : var.availability_domain
   ubuntu_image_id = var.ubuntu_image_id != "" ? var.ubuntu_image_id : data.oci_core_images.ubuntu.images[0].id
 }
 
@@ -43,7 +45,7 @@ data "oci_core_images" "ubuntu" {
   compartment_id           = var.tenancy_ocid
   operating_system         = "Canonical Ubuntu"
   operating_system_version = "22.04"
-  shape                    = "VM.Standard.E2.1.Micro"
+  shape                    = var.instance_shape
   sort_by                  = "TIMECREATED"
   sort_order               = "DESC"
 }
@@ -124,22 +126,83 @@ resource "oci_core_security_list" "this" {
 
 # ---- Subnet ----
 resource "oci_core_subnet" "this" {
-  compartment_id        = var.compartment_ocid
-  vcn_id                = oci_core_vcn.this.id
-  display_name          = "pro-portfolio-subnet"
-  cidr_block            = var.subnet_cidr
-  security_list_ids     = [oci_core_security_list.this.id]
-  route_table_id        = oci_core_route_table.this.id
-  dns_label             = "portfoliosub"
+  compartment_id             = var.compartment_ocid
+  vcn_id                     = oci_core_vcn.this.id
+  display_name               = "pro-portfolio-subnet"
+  cidr_block                 = var.subnet_cidr
+  security_list_ids          = [oci_core_security_list.this.id]
+  route_table_id             = oci_core_route_table.this.id
+  dns_label                  = "portfoliosub"
   prohibit_public_ip_on_vnic = false
 }
 
-# ---- Compute Instance (Always Free: VM.Standard.E2.1.Micro, AMD) ----
+# ---- Compute Instance (Always Free: VM.Standard.A1.Flex, Ampere, 1 OCPU / 4 GB RAM) ----
 resource "oci_core_instance" "this" {
   availability_domain = local.ad_name
   compartment_id      = var.compartment_ocid
   display_name        = "pro-portfolio-vm"
-  shape               = "VM.Standard.E2.1.Micro"
+  shape               = var.instance_shape
+  fault_domain        = var.fault_domain != "" ? var.fault_domain : null
+
+  shape_config {
+    ocpus         = var.instance_ocpus
+    memory_in_gbs = var.instance_memory_gbs
+  }
+
+  availability_config {
+    recovery_action = "RESTORE_INSTANCE"
+  }
+
+  instance_options {
+    are_legacy_imds_endpoints_disabled = true
+  }
+
+  agent_config {
+    is_monitoring_disabled   = false
+    is_management_disabled   = false
+    are_all_plugins_disabled = false
+
+    plugins_config {
+      name          = "Compute Instance Monitoring"
+      desired_state = "ENABLED"
+    }
+    plugins_config {
+      name          = "Custom Logs Monitoring"
+      desired_state = "ENABLED"
+    }
+    plugins_config {
+      name          = "OS Management Hub Agent"
+      desired_state = "ENABLED"
+    }
+    plugins_config {
+      name          = "Cloud Guard Workload Protection"
+      desired_state = "ENABLED"
+    }
+    plugins_config {
+      name          = "Vulnerability Scanning"
+      desired_state = "DISABLED"
+    }
+    plugins_config {
+      name          = "Management Agent"
+      desired_state = "DISABLED"
+    }
+    plugins_config {
+      name          = "Compute HPC RDMA Auto-Configuration"
+      desired_state = "DISABLED"
+    }
+    plugins_config {
+      name          = "Compute HPC RDMA Authentication"
+      desired_state = "DISABLED"
+    }
+    plugins_config {
+      name          = "Block Volume Management"
+      desired_state = "DISABLED"
+    }
+    plugins_config {
+      name          = "Bastion"
+      desired_state = "DISABLED"
+    }
+  }
 
   source_details {
     source_type             = "image"
